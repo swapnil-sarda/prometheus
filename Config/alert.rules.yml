@@ -1,0 +1,24 @@
+  groups:
+    - name: alert.rules
+      rules:
+        # 1) Webpage availability
+        - alert: WebpageIsUnreachable                                                                                    
+          expr: probe_http_status_code <= 199 OR probe_http_status_code >= 400                                        # Condition when alert should be triggered
+          for: 1m                                                                                                     # Time to wait before sending the notification.
+          labels:
+            severity: critical                                                                                        # Alert severity.
+          annotations:
+            summary: Webpage unreachable (instance {{ $labels.instance }})                                            # Alert description in email subject.
+            description: "Webpage is unreachable.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"                  # Content in body of the email.
+        # 2) SSL certificate nearing expiry
+        - alert: SslCertificateWillExpireSoon
+          expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 40
+          for: 0m
+          labels:
+            severity: warning
+          annotations:
+            summary: SSL certificate will expire soon (instance {{ $labels.instance }})
+            description: "SSL certificate expires in 30 days\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+
+

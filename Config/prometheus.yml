@@ -1,0 +1,41 @@
+#Global config
+
+global:
+  scrape_interval: 1m                                    # Time interval to scrape
+  evaluation_interval: 1m                                # Time interval to evaluate rules
+
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['10.0.1.16:9093']
+
+# Rules to evaluate periodically
+rule_files:
+  - alert.rules.yml
+
+
+# Endpoints to scrape
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['10.0.1.16:9090']                       # IP Address of the localhost
+  - job_name: 'blackbox-exporter'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]   
+    static_configs:
+      - targets:                                          # Websites to monitor
+          - https://www.clevernet.tech/         
+          - https://www.pillohotelashbourne.com/
+          - https://www.fitzwilliamhotelbelfast.com/
+          - https://www.cricbuzz.com
+          - https://www.wired.com    
+    relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: 10.0.1.16:9115                    # IP Address of the localhost
