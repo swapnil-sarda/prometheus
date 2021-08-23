@@ -17,6 +17,6 @@ Dashboard Output
 ![Dashboard_Output_2](https://github.com/swapnil-sarda/prometheus/blob/df20701e229199516f8eedc87108eb76a6693345/Images/Grafana_Output_2.png)
 
 
-Email Output
+Email Notification Output
 
 ![Email_Output](https://github.com/swapnil-sarda/prometheus/blob/df20701e229199516f8eedc87108eb76a6693345/Images/Email_Alert_Output.png)
