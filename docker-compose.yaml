@@ -1,0 +1,52 @@
+version: '3.8'                                                                                         # Using Docker Engine version 20.10.7
+services:                                                                                              # Required services to be configured here.
+  
+# Prometheus docker image config
+  prometheus:                                                                                          
+    image: prom/prometheus:latest                                                                      # Name and version of the docker image on docker hub.
+    container_name: prometheus                                                                         # Runtime name of the container.
+    restart: "unless-stopped"                                                                          # Restart properties
+    ports:                                                                      
+      - 9090:9090                                                                                      # Mapping of "Host port:Container port"
+    volumes:
+      - /Users/swapnils/docker/prom:/etc/prometheus/                                                   # Mapping of config files on host:container
+    command: 
+      - '--config.file=/etc/prometheus/prometheus.yml'                                                 # Config file to load.
+
+# Grafana docker image config
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: "unless-stopped" 
+    ports:
+      - 3000:3000
+    volumes:
+      - /Users/swapnils/docker/grafana:/var/lib/ grafana
+    depends_on: 
+      - prometheus
+  
+# Alertmanager docker image config 
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alert_manager
+    restart: "unless-stopped" 
+    volumes:
+      - /Users/swapnils/docker/prom:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/alertmanager.yml'
+    ports:
+      - 9093:9093
+    depends_on: 
+      - prometheus
+
+# Blackbox docker image config
+  blackbox:
+    image: prom/blackbox-exporter
+    container_name: blackbox-exporter
+    restart: "unless-stopped" 
+    volumes:
+      - /Users/swapnils/docker/prom:/config
+    ports:
+      - 9115:9115
+    depends_on: 
+      - prometheus
